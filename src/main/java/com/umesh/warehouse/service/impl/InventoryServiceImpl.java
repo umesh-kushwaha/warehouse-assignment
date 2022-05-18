@@ -7,6 +7,7 @@ import com.umesh.warehouse.loader.DataHolder;
 import com.umesh.warehouse.model.ContainArticle;
 import com.umesh.warehouse.model.Inventory;
 import com.umesh.warehouse.service.InventoryService;
+import com.umesh.warehouse.util.InventoryHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class InventoryServiceImpl implements InventoryService {
             throw new ProductNotFoundException("Product does not exist in our inventory");
         }
 
+        //check product is in stock or not
+        InventoryHelper.isProductStockAvailable(dataHolder, productName, containArticles);
+
         for(int i=0; i < containArticles.size(); i++){
             ContainArticle containArticle = containArticles.get(i);
             int articleAmount = Integer.parseInt(containArticle.getAmountOf());
@@ -42,10 +46,5 @@ public class InventoryServiceImpl implements InventoryService {
             dataHolder.getInventoryMap().put(containArticle.getArtId(), inventory);
         }
         log.info("Product {} inventory adjusted successfully ", productName);
-        try {
-            log.info("Inventory after adjustment: {}", objectMapper.writeValueAsString(dataHolder.getInventoryMap()));
-        } catch (JsonProcessingException jsonProcessingException) {
-            log.error("Failed convert map to string, {}", jsonProcessingException.getMessage());
-        }
     }
 }

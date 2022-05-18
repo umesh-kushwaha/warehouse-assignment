@@ -1,5 +1,6 @@
 package com.umesh.warehouse.controller;
 
+import com.umesh.warehouse.exception.OurOfStockException;
 import com.umesh.warehouse.exception.ProductNotFoundException;
 import com.umesh.warehouse.model.response.ProductListResponse;
 import com.umesh.warehouse.service.impl.InventoryServiceImpl;
@@ -40,6 +41,9 @@ public class InventoryController {
         }catch (ProductNotFoundException productNotFoundException){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, productNotFoundException.getMessage(),
                     productNotFoundException);
+        }catch (OurOfStockException ourOfStockException){
+            log.error("{} is out of stock. error : {}", productName,ourOfStockException.getMessage());
+            throw new ResponseStatusException(HttpStatus.OK, ourOfStockException.getMessage());
         }
         return new ResponseEntity(HttpStatus.OK);
     }
