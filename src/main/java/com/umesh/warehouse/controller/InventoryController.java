@@ -36,15 +36,8 @@ public class InventoryController {
     @PutMapping(value = "/sell")
     public ResponseEntity sellProduct(@RequestParam("name") String productName){
         log.info("Product Name : {}", productName);
-        try {
-            inventoryService.adjustStock(productName);
-        }catch (ProductNotFoundException productNotFoundException){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, productNotFoundException.getMessage(),
-                    productNotFoundException);
-        }catch (OurOfStockException ourOfStockException){
-            log.error("{} is out of stock. error : {}", productName,ourOfStockException.getMessage());
-            throw new ResponseStatusException(HttpStatus.OK, ourOfStockException.getMessage());
-        }
+        inventoryService.adjustStock(productName);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 }
